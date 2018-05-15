@@ -29,7 +29,8 @@ ui <- dashboardPage(
   
   dashboardBody(
     box(title = "Main Data Table", solidHeader = TRUE, status = "primary", width = 8, dataTableOutput("mainDataTable")),
-    box(title = "Main Data Table", solidHeader = TRUE, status = "primary", width = 8, dataTableOutput("pubGrossSalesTable"))
+    box(title = "Main Data Table", solidHeader = TRUE, status = "primary", width = 8, dataTableOutput("pubGrossTable")),
+    box(title = "Main Data Table", solidHeader = TRUE, status = "primary", width = 8, dataTableOutput("genreGrossTable"))
   ) # end dashboardBody
 ) # end dashBoardPage
 
@@ -42,12 +43,20 @@ server <- function(input, output) {
     DT::datatable(t, options = list(pageLength = 12, lengthChange = FALSE, searching = FALSE))
   })
   
-  output$pubGrossSalesTable <- DT::renderDataTable({
+  output$pubGrossTable <- DT::renderDataTable({
     t <- group_by(salesData0, Publisher)
     t <- summarise(t, Gross = sum(Global_Sales))
     t <- arrange(t, desc(Gross))
     
     DT::datatable(t, options = list(pageLength = 12, lengthChange = FALSE, searching = FALSE))
+  })
+  
+  output$genreGrossTable <- DT::renderDataTable({
+    t <- group_by(salesData0, Genre)
+    t1 <- summarise(t, Gross = sum(Global_Sales), Total = n())
+    t1 <- arrange(t1, desc(Gross))
+    
+    DT::datatable(t1, options = list(pageLength = 12, lengthChange = FALSE, searching = FALSE))
   })
 }
 
