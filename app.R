@@ -18,41 +18,37 @@ salesData <- read.csv(file = "vgsales.csv", header = TRUE)
 salesData[salesData == "N/A"]  <- NA
 salesData0 <- na.omit(salesData)
 
-
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-   
-   # Application title
-   titlePanel("Old Faithful Geyser Data"),
-   
-   # Sidebar with a slider input for number of bins 
-   sidebarLayout(
-      sidebarPanel(
-         sliderInput("bins",
-                     "Number of bins:",
-                     min = 1,
-                     max = 50,
-                     value = 30)
-      ),
+ui <- dashboardPage(
+  dashboardHeader(title = "Video Game Sales"),
+  
+  dashboardSidebar(
+    sidebarMenu(
       
-      # Show a plot of the generated distribution
-      mainPanel(
-         plotOutput("distPlot")
-      )
-   )
-)
+    ) # end sidebarMenu
+  ), # end dashboardSidebar
+  
+  dashboardBody(
+    box(title = "Main Data Table", solidHeader = TRUE, status = "primary", width = 8, dataTableOutput("mainDataTable")),
+    box(title = "Main Data Table", solidHeader = TRUE, status = "primary", width = 8, dataTableOutput("pubGrossSalesTable"))
+  ) # end dashboardBody
+) # end dashBoardPage
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
-   output$distPlot <- renderPlot({
-      # generate bins based on input$bins from ui.R
-      x    <- faithful[, 2] 
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
-      
-      # draw the histogram with the specified number of bins
-      hist(x, breaks = bins, col = 'darkgray', border = 'white')
-   })
+  output$mainDataTable <- DT::renderDataTable({
+    t <- salesData0
+    
+    DT::datatable(t, options = list(pageLength = 12, lengthChange = FALSE, searching = FALSE))
+  })
+  
+  output$pubGrossSalesTable <- DT::renderDataTable({
+    t <- group_by(salesData0, Publisher)
+    t <- summarise(t, Gross = sum(Global_Sales))
+    t <- arrange(t, desc(Gross))
+    
+    DT::datatable(t, options = list(pageLength = 12, lengthChange = FALSE, searching = FALSE))
+  })
 }
 
 # Run the application 
