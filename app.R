@@ -18,6 +18,7 @@ salesData <- read.csv(file = "vgsales.csv", header = TRUE)
 salesData[salesData == "N/A"]  <- NA
 salesData0 <- na.omit(salesData)
 
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    
