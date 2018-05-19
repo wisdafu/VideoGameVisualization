@@ -29,6 +29,7 @@ ui <- dashboardPage(
   
   dashboardBody(
     box(title = "Main Data Table", solidHeader = TRUE, status = "primary", width = 8, dataTableOutput("mainDataTable")),
+    box(title = "Plot", solidHeader = TRUE, status = "primary", width = 12, plotlyOutput("Chart")),
     box(title = "Main Data Table", solidHeader = TRUE, status = "primary", width = 8, dataTableOutput("pubGrossTable")),
     box(title = "Main Data Table", solidHeader = TRUE, status = "primary", width = 8, dataTableOutput("genreGrossTable"))
   ) # end dashboardBody
@@ -57,6 +58,10 @@ server <- function(input, output) {
     t1 <- arrange(t1, desc(Gross))
     
     DT::datatable(t1, options = list(pageLength = 12, lengthChange = FALSE, searching = FALSE))
+  })
+  
+  output$Chart <- renderPlotly({
+    
   })
 }
 
